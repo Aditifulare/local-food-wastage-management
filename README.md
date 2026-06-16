@@ -1,5 +1,7 @@
 # 🍱 Local Food Wastage Management System
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://local-food-wastage-management-4y77gbgytmwykvtku4d6jc.streamlit.app/)
+
 A data-driven web application to reduce food wastage by connecting surplus food providers with those in need.
 
 ---
