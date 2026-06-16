@@ -1,6 +1,10 @@
 <<<<<<< HEAD
 # 🍱 Local Food Wastage Management System
 
+git add README.md
+git commit -m "Add Streamlit badge"
+git pushS
+
 A data-driven web application to reduce food wastage by connecting surplus food providers with those in need.
 
 ---
