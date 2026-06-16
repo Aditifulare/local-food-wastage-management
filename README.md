@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🍱 Local Food Wastage Management System
 
 A data-driven web application to reduce food wastage by connecting surplus food providers with those in need.
@@ -108,3 +109,7 @@ python -m streamlit run app.py
 **Aditi Fulare**  
 B.Sc. Computer Science | Data Analyst Enthusiast  
 [GitHub](https://github.com/Aditifulare) | [LinkedIn](https://www.linkedin.com/in/aditi-fulare)
+=======
+# local-food-wastage-management
+Local Food Wastage Management System using Python, SQL and Streamlit
+>>>>>>> fcdfbb5726a7c9d5b9cf009d5cd1f753143ac354

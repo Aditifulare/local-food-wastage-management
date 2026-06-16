@@ -1,7 +1,7 @@
-
 import streamlit as st
 import pandas as pd
 import mysql.connector
+import plotly.express as px
  
 # Database connection
 def get_connection():
@@ -26,6 +26,7 @@ st.title("🍱 Local Food Wastage Management System")
 st.sidebar.title("Navigation")
 menu = st.sidebar.radio("Go to", [
     "Home",
+    "EDA - Analysis & Charts",
     "SQL Query Results",
     "Food Listings",
     "CRUD Operations"
@@ -34,12 +35,66 @@ menu = st.sidebar.radio("Go to", [
 if menu == "Home":
     st.subheader("Welcome!")
     st.write("This system connects surplus food providers with those in need.")
-    
+ 
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Total Providers", run_query("SELECT COUNT(*) as c FROM providers")['c'][0])
     col2.metric("Total Receivers", run_query("SELECT COUNT(*) as c FROM receivers")['c'][0])
     col3.metric("Food Listings", run_query("SELECT COUNT(*) as c FROM food_listings")['c'][0])
     col4.metric("Total Claims", run_query("SELECT COUNT(*) as c FROM claims")['c'][0])
+ 
+elif menu == "EDA - Analysis & Charts":
+    st.subheader("📈 Exploratory Data Analysis")
+ 
+    # Chart 1: Claims by Status - Pie Chart
+    st.markdown("### 1. Claims Distribution by Status")
+    df1 = run_query("SELECT Status, COUNT(*) as count FROM claims GROUP BY Status")
+    fig1 = px.pie(df1, names='Status', values='count', title='Claims by Status')
+    st.plotly_chart(fig1, use_container_width=True)
+ 
+    # Chart 2: Food Type Distribution - Bar Chart
+    st.markdown("### 2. Food Type Distribution")
+    df2 = run_query("SELECT Food_Type, COUNT(*) as count FROM food_listings GROUP BY Food_Type ORDER BY count DESC")
+    fig2 = px.bar(df2, x='Food_Type', y='count', color='Food_Type', title='Food Type Distribution')
+    st.plotly_chart(fig2, use_container_width=True)
+ 
+    # Chart 3: Meal Type wise Claims - Bar Chart
+    st.markdown("### 3. Meal Type wise Claims")
+    df3 = run_query("""
+        SELECT f.Meal_Type, COUNT(c.Claim_ID) as total_claims
+        FROM food_listings f
+        JOIN claims c ON f.Food_ID = c.Food_ID
+        GROUP BY f.Meal_Type ORDER BY total_claims DESC
+    """)
+    fig3 = px.bar(df3, x='Meal_Type', y='total_claims', color='Meal_Type', title='Claims by Meal Type')
+    st.plotly_chart(fig3, use_container_width=True)
+ 
+    # Chart 4: Provider Type wise Food Contribution
+    st.markdown("### 4. Provider Type wise Food Contribution")
+    df4 = run_query("""
+        SELECT p.Type, SUM(f.Quantity) as total_food
+        FROM providers p
+        JOIN food_listings f ON p.Provider_ID = f.Provider_ID
+        GROUP BY p.Type ORDER BY total_food DESC
+    """)
+    fig4 = px.bar(df4, x='Type', y='total_food', color='Type', title='Food Contribution by Provider Type')
+    st.plotly_chart(fig4, use_container_width=True)
+ 
+    # Chart 5: Top 10 Cities with Most Food Listings
+    st.markdown("### 5. Top 10 Cities with Most Food Listings")
+    df5 = run_query("""
+        SELECT Location, COUNT(*) as total_listings
+        FROM food_listings
+        GROUP BY Location ORDER BY total_listings DESC LIMIT 10
+    """)
+    fig5 = px.bar(df5, x='Location', y='total_listings', color='total_listings',
+                  title='Top 10 Cities - Food Listings', color_continuous_scale='Viridis')
+    st.plotly_chart(fig5, use_container_width=True)
+ 
+    # Chart 6: Receiver Type Distribution - Pie Chart
+    st.markdown("### 6. Receiver Type Distribution")
+    df6 = run_query("SELECT Type, COUNT(*) as count FROM receivers GROUP BY Type")
+    fig6 = px.pie(df6, names='Type', values='count', title='Receiver Types')
+    st.plotly_chart(fig6, use_container_width=True)
  
 elif menu == "SQL Query Results":
     st.subheader("📊 SQL Query Results")
@@ -152,4 +207,3 @@ elif menu == "CRUD Operations":
             conn.commit()
             conn.close()
             st.success(f"Food ID {food_id} deleted successfully!")
-            
